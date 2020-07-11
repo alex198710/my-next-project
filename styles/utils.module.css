@@ -76,3 +76,22 @@
 .docs {
   min-width: calc((100% - 300px) - 1rem);
 }
+.sidebarLink {
+  text-decoration: none;
+  color: unset;
+}
+.leaf::before {
+  content: '';
+  -webkit-flex-basis: 4px;
+  -ms-flex-preferred-size: 4px;
+  flex-basis: 4px;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #666666;
+  margin-right: 0px;
+}

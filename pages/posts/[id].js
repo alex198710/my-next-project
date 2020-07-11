@@ -3,19 +3,25 @@ import { getAllPostIds, getPostData, getSortedPostsData } from '../../lib/posts'
 import Head from 'next/head'
 import Date from '../../components/date'
 import utilStyles from '../../styles/utils.module.css'
+import { capitalize, slugToTitle } from '../../components/utils'
 
 
 export default function Post({postData, allPostsData}) {
+  const title = capitalize(postData.title || slugToTitle(postData.id))
   return (
     <Layout allPostsData={allPostsData}>
       <Head>
-        <title>{postData.title}</title>
+        <title>{title}</title>
       </Head>
       <article>
-        <h1 className={utilStyles.headingXl}>{postData.title}</h1>
-        <div className={utilStyles.lightText}>
-          <Date dateString={postData.date} />
-        </div>
+        {postData.title && (
+          <h1 className={utilStyles.headingXl}>{postData.title}</h1>
+        )}
+        {postData.date && (
+          <div className={utilStyles.lightText}>
+            <Date dateString={postData.date} />
+          </div>
+        )}
         <div dangerouslySetInnerHTML={{ __html: postData.contentHtml }} />
       </article>
     </Layout>

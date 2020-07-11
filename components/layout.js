@@ -2,6 +2,13 @@ import Head from 'next/head'
 import styles from './layout.module.css'
 import utilStyles from '../styles/utils.module.css'
 import Link from 'next/link'
+import { makeStyles } from '@material-ui/core/styles';
+import TreeView from '@material-ui/lab/TreeView';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import TreeItem from '@material-ui/lab/TreeItem';
+import { slugToTitle, capitalize } from './utils';
+import Navbar from './navbar';
 
 const name = 'Your Name'
 export const siteTitle = 'Next.js Sample Website'
@@ -11,9 +18,9 @@ function renderUl(data, subFolder = "", marginLeft = 0) {
     <ul className={utilStyles.list} style={{marginLeft: `${marginLeft}px`}}>
       {data.map(({ id, date, title, children }) => (
         <li className={utilStyles.listItem} key={id}>
-          {!children ? (
+          {(children?.length || 0) === 0 ? (
             <Link href="/posts/[id]" as={`/posts/${subFolder}${id}`}>
-              <a>{title}</a>
+              <a>{title || id}</a>
             </Link>
           ) : (
             <>
@@ -29,23 +36,70 @@ function renderUl(data, subFolder = "", marginLeft = 0) {
   )
 }
 
-export default function Layout({ children, home, allPostsData }) {
+const useStyles = makeStyles({
+  root: {
+    height: 240,
+    flexGrow: 1,
+    minWidth: 275,
+    maxWidth: 400,
+  },
+});
+
+function renderTreeview(data, subFolder = "", marginLeft = 0) {
   return (
-    <div className={utilStyles.body}>
-      <div className={utilStyles.content}>
-        <aside className={utilStyles.sidebar}>
-          {renderUl(allPostsData)}
-        </aside>
-        {children}
-      </div>
-      {!home && (
-        <div className={styles.backToHome}>
-          <Link href="/">
-            <a>← Back to home</a>
-          </Link>
+    <>
+      {data.map(({ id, date, title, children }) => {
+        const prettyTitle = capitalize(title || slugToTitle(id))
+        return (
+          <React.Fragment key={id}>
+            {(children?.length || 0) === 0 ? (
+              <TreeItem nodeId={id} label={
+                <Link href="/posts/[id]" as={`/posts/${subFolder}${id}`}>
+                  <a className={utilStyles.sidebarLink}>{prettyTitle}</a>
+                </Link>
+              } />
+            ) : (
+              <TreeItem nodeId={id} label={prettyTitle}>
+                {renderTreeview(children, subFolder + title + "_", marginLeft + 20)}
+              </TreeItem>
+            )}
+          </React.Fragment>
+        )
+      })}
+    </>
+  )
+}
+
+export default function Layout({ children, home, allPostsData }) {
+  const classes = useStyles();
+  return (
+    <>
+    <Navbar />
+      <div className={utilStyles.body}>
+        <div className={utilStyles.content}>
+          <aside className={utilStyles.sidebar}>
+            <TreeView
+        className={classes.root}
+              defaultCollapseIcon={<ExpandMoreIcon />}
+              defaultExpandIcon={<ChevronRightIcon />}
+              defaultEndIcon={<span className={utilStyles.leaf} />}
+            >
+              {renderTreeview(allPostsData)}
+            </TreeView>
+          </aside>
+          <div>
+            {children}
+            {!home && (
+              <div className={styles.backToHome}>
+                <Link href="/">
+                  <a>← Back to home</a>
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
-      )}
-    </div>
+      </div>
+    </>
   )
   /*return (
     <div className={styles.container}>
