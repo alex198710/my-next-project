@@ -1,10 +1,10 @@
 import Layout from '../../components/layout'
+import Link from 'next/link'
 import { getAllPostIds, getPostData, getSortedPostsData } from '../../lib/posts'
 import Head from 'next/head'
 import Date from '../../components/date'
 import utilStyles from '../../styles/utils.module.css'
 import { capitalize, slugToTitle } from '../../components/utils'
-
 
 export default function Post({postData, allPostsData}) {
   const title = capitalize(postData.title || slugToTitle(postData.id))
@@ -23,6 +23,23 @@ export default function Post({postData, allPostsData}) {
           </div>
         )}
         <div dangerouslySetInnerHTML={{ __html: postData.contentHtml }} />
+
+        <br />
+        <br />
+        <hr />
+        <h2>XML samples</h2>
+        {(postData.xml || []).map((xml, i) => {
+          const path = postData.id.split("_")
+          path.pop()
+          return (
+            <React.Fragment key={i}>
+              <Link href="/xml/[id]" as={`/xml/${path.join("_")}_${xml}`}>
+                <a>{xml}</a>
+              </Link>
+              <br/>
+            </React.Fragment>
+          )
+        })}
       </article>
     </Layout>
   )

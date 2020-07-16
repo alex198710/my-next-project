@@ -4,6 +4,8 @@ import Head from 'next/head';
 import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from './theme';
+import hljs from 'highlight.js/lib/core'
+import 'highlight.js/styles/github.css'
 
 export default function MyApp(props) {
   const { Component, pageProps } = props;
